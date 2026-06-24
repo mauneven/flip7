@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  color: #f1f0fb;
+  background-color: #0a0712;
+  background-image:
+    radial-gradient(1100px 600px at 8% -12%, rgba(168, 85, 247, 0.28), transparent 60%),
+    radial-gradient(1000px 520px at 102% -4%, rgba(236, 72, 153, 0.22), transparent 55%),
+    radial-gradient(900px 620px at 50% 118%, rgba(56, 189, 248, 0.16), transparent 58%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Numeric displays look cleaner with tabular figures. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Frosted panel used across screens. */
+.glass {
+  background: rgba(23, 18, 38, 0.62);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-strong {
+  background: rgba(17, 13, 30, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Subtle moving sheen for the brand title. */
+.brand-shimmer {
+  background: linear-gradient(
+    100deg,
+    #fb7185 0%,
+    #f59e0b 22%,
+    #34d399 44%,
+    #38bdf8 66%,
+    #a78bfa 88%,
+    #fb7185 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Hide scrollbars on horizontal card strips while keeping scroll. */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
