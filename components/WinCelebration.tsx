@@ -6,7 +6,31 @@ import confetti from "canvas-confetti";
 import { useT } from "@/lib/lang";
 import type { GameState } from "@/lib/types";
 import type { GameActions } from "@/lib/useGame";
-import { getStandings, getWinners } from "@/lib/scoring";
+import { getGameStats, getStandings, getWinners } from "@/lib/scoring";
+
+function StatRow({
+  emoji,
+  label,
+  value,
+}: {
+  emoji: string;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-line/10 bg-surface px-3.5 py-2.5">
+      <span className="text-xl" aria-hidden>
+        {emoji}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="text-[0.7rem] font-bold uppercase tracking-wide text-faint">
+          {label}
+        </p>
+        <p className="truncate font-black">{value}</p>
+      </div>
+    </div>
+  );
+}
 
 const CONFETTI_COLORS = ["#d3774f", "#d1a24a", "#e7e0d4", "#be5a3c", "#a8a296"];
 const MEDALS = ["🥇", "🥈", "🥉"];
@@ -22,6 +46,7 @@ export function WinCelebration({ state, actions }: WinCelebrationProps) {
   const standings = getStandings(state);
   const winners = getWinners(state);
   const isTie = winners.length > 1;
+  const stats = getGameStats(state);
 
   useEffect(() => {
     const reduce =
@@ -155,6 +180,43 @@ export function WinCelebration({ state, actions }: WinCelebrationProps) {
                 <span className="tabular text-lg font-black">{s.total}</span>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Memorable moments */}
+        <div className="mt-7 w-full">
+          <h2 className="mb-2 text-xs font-bold uppercase tracking-widest text-faint">
+            {t("stats.title")}
+          </h2>
+          <div className="space-y-1.5">
+            {stats.bestRound && (
+              <StatRow
+                emoji="🔥"
+                label={t("stats.bestRound")}
+                value={`${stats.bestRound.name} · ${stats.bestRound.score} ${t("stats.inRound", { n: stats.bestRound.round })}`}
+              />
+            )}
+            {stats.mostConsistent && (
+              <StatRow
+                emoji="📈"
+                label={t("stats.consistent")}
+                value={`${stats.mostConsistent.name} · ${t("stats.avg", { n: stats.mostConsistent.avg })}`}
+              />
+            )}
+            {stats.mostBusts && (
+              <StatRow
+                emoji="❄️"
+                label={t("stats.mostBusts")}
+                value={`${stats.mostBusts.name} · ${t("stats.times", { n: stats.mostBusts.count })}`}
+              />
+            )}
+            {stats.roundsPlayed > 0 && (
+              <StatRow
+                emoji="🎯"
+                label={t("stats.roundsPlayed")}
+                value={`${stats.roundsPlayed}`}
+              />
+            )}
           </div>
         </div>
 

@@ -13,10 +13,11 @@ export interface PlayingCardProps {
   corner?: boolean;
   size?: "sm" | "md";
   ariaLabel?: string;
+  className?: string;
 }
 
 const TEXT_SIZE: Record<NonNullable<PlayingCardProps["size"]>, string> = {
-  sm: "text-base rounded-lg",
+  sm: "text-2xl rounded-xl",
   md: "text-3xl sm:text-4xl rounded-2xl",
 };
 
@@ -28,6 +29,7 @@ export function PlayingCard({
   corner = false,
   size = "md",
   ariaLabel,
+  className = "",
 }: PlayingCardProps) {
   const interactive = typeof onClick === "function";
 
@@ -53,6 +55,7 @@ export function PlayingCard({
           ? selectedClasses
           : "border-line/10 bg-surface2 text-faint",
         interactive ? "cursor-pointer" : "cursor-default",
+        className,
       ].join(" ")}
     >
       {corner && (

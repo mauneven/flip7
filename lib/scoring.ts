@@ -50,7 +50,7 @@ export function computeBreakdown(sel: RoundSelection): ScoreBreakdown {
 }
 
 export function playerTotal(player: Player): number {
-  return player.rounds.reduce((a, b) => a + b, 0);
+  return player.rounds.reduce((a, r) => a + r.score, 0);
 }
 
 export interface Standing {
@@ -100,4 +100,43 @@ export function getWinners(state: GameState): Player[] {
 /** True when at least one player's total has crossed the goal. */
 export function someoneReachedGoal(state: GameState): boolean {
   return state.players.some((p) => playerTotal(p) >= state.scoreGoal);
+}
+
+export interface GameStats {
+  bestRound: { name: string; score: number; round: number } | null;
+  mostBusts: { name: string; count: number } | null;
+  mostConsistent: { name: string; avg: number } | null;
+  roundsPlayed: number;
+}
+
+/** Fun "memorable moments" computed from the recorded rounds. */
+export function getGameStats(state: GameState): GameStats {
+  let bestRound: GameStats["bestRound"] = null;
+  let mostBusts: GameStats["mostBusts"] = null;
+  let mostConsistent: GameStats["mostConsistent"] = null;
+  let roundsPlayed = 0;
+
+  for (const p of state.players) {
+    roundsPlayed = Math.max(roundsPlayed, p.rounds.length);
+
+    p.rounds.forEach((r, i) => {
+      if (r.score > 0 && (!bestRound || r.score > bestRound.score)) {
+        bestRound = { name: p.name, score: r.score, round: i + 1 };
+      }
+    });
+
+    const busts = p.rounds.filter((r) => r.busted).length;
+    if (busts > 0 && (!mostBusts || busts > mostBusts.count)) {
+      mostBusts = { name: p.name, count: busts };
+    }
+
+    if (p.rounds.length > 0) {
+      const avg = Math.round(playerTotal(p) / p.rounds.length);
+      if (!mostConsistent || avg > mostConsistent.avg) {
+        mostConsistent = { name: p.name, avg };
+      }
+    }
+  }
+
+  return { bestRound, mostBusts, mostConsistent, roundsPlayed };
 }

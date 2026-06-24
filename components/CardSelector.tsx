@@ -39,7 +39,7 @@ export function CardSelector({ selection, onChange }: CardSelectorProps) {
 
   return (
     <div className="space-y-6">
-      {/* Number cards */}
+      {/* Number cards — 5 per row, last row (10·11·12) centered */}
       <section>
         <div className="mb-2.5 flex items-center justify-between gap-2">
           <div>
@@ -76,12 +76,13 @@ export function CardSelector({ selection, onChange }: CardSelectorProps) {
               selected={selection.basics.includes(n)}
               onClick={() => toggleBasic(n)}
               ariaLabel={`${t("round.basics")} ${n}`}
+              className={n === 10 ? "col-start-2" : ""}
             />
           ))}
         </div>
       </section>
 
-      {/* Bonus + multiplier cards */}
+      {/* Bonus + multiplier — the 6 wildcards in one row */}
       <section>
         <h3 className="mb-2.5 text-sm font-bold uppercase tracking-wider text-text">
           {t("round.modifiers")}{" "}
@@ -89,12 +90,13 @@ export function CardSelector({ selection, onChange }: CardSelectorProps) {
             · {t("round.multiplier")}
           </span>
         </h3>
-        <div className="grid grid-cols-5 gap-2.5">
+        <div className="grid grid-cols-6 gap-2">
           {MODIFIER_CARDS.map((n) => (
             <PlayingCard
               key={n}
               label={`+${n}`}
               variant="bonus"
+              size="sm"
               selected={selection.modifiers.includes(n)}
               onClick={() => toggleModifier(n)}
               ariaLabel={`+${n}`}
@@ -103,13 +105,11 @@ export function CardSelector({ selection, onChange }: CardSelectorProps) {
           <PlayingCard
             label="×2"
             variant="x2"
+            size="sm"
             selected={selection.x2}
             onClick={toggleX2}
             ariaLabel={t("round.multiplier")}
           />
-          <div className="col-span-4 flex items-center">
-            <p className="text-sm font-medium text-muted">{t("round.x2Hint")}</p>
-          </div>
         </div>
       </section>
     </div>

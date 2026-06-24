@@ -1,11 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useT } from "@/lib/lang";
 import type { GameState } from "@/lib/types";
 import type { GameActions } from "@/lib/useGame";
 import { getStandings, someoneReachedGoal } from "@/lib/scoring";
 import { Menu } from "./Menu";
+import { ConfirmDialog } from "./ConfirmDialog";
+import { PlayerEditor } from "./PlayerEditor";
+import { PencilIcon } from "./icons";
 
 const MEDALS = ["🥇", "🥈", "🥉"];
 
@@ -17,16 +21,16 @@ interface ScoreboardProps {
 
 export function Scoreboard({ state, actions, onEnterRound }: ScoreboardProps) {
   const { t } = useT();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
   const standings = getStandings(state);
   const reached = someoneReachedGoal(state);
   const leaderName =
     standings.find((s) => s.isWinner)?.player.name ?? standings[0]?.player.name;
   const hasScores = state.players.some((p) => p.rounds.length > 0);
   const lead = standings.length >= 2 ? standings[0].total - standings[1].total : 0;
-
-  const confirmNewGame = () => {
-    if (window.confirm(t("board.resetConfirm"))) actions.newGame();
-  };
+  const editingPlayer = state.players.find((p) => p.id === editingId) ?? null;
 
   return (
     <div className="mx-auto w-full max-w-lg px-4 pb-32 pt-5">
@@ -36,7 +40,7 @@ export function Scoreboard({ state, actions, onEnterRound }: ScoreboardProps) {
           <h1 className="whitespace-nowrap font-serif text-3xl font-black tracking-tight">
             FLIP <span className="text-accent">7</span>
           </h1>
-          <Menu onNewGame={confirmNewGame} />
+          <Menu onNewGame={() => setConfirmOpen(true)} />
         </div>
         <div className="flex items-center gap-1.5">
           <span className="tabular rounded-full bg-line/10 px-3 py-1 text-xs font-bold text-muted">
@@ -58,10 +62,7 @@ export function Scoreboard({ state, actions, onEnterRound }: ScoreboardProps) {
             className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-gold/30 bg-gold/10 px-4 py-3"
           >
             <p className="text-sm font-bold text-text">
-              {t("board.goalBanner", {
-                name: leaderName ?? "",
-                goal: state.scoreGoal,
-              })}
+              {t("board.goalBanner", { name: leaderName ?? "", goal: state.scoreGoal })}
             </p>
             <button
               type="button"
@@ -86,12 +87,14 @@ export function Scoreboard({ state, actions, onEnterRound }: ScoreboardProps) {
           const pct = Math.min(100, (s.total / state.scoreGoal) * 100);
           const isLeader = idx === 0 && s.total > 0;
           return (
-            <motion.div
+            <motion.button
               key={s.player.id}
               layout
+              type="button"
+              onClick={() => setEditingId(s.player.id)}
               transition={{ type: "spring", stiffness: 420, damping: 34 }}
               className={[
-                "rounded-2xl border bg-surface p-3.5",
+                "block w-full rounded-2xl border bg-surface p-3.5 text-left transition hover:border-accent/40",
                 s.isWinner
                   ? "border-gold/40 bg-gold/5"
                   : isLeader
@@ -110,15 +113,14 @@ export function Scoreboard({ state, actions, onEnterRound }: ScoreboardProps) {
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="truncate text-base font-black">
-                      {s.player.name}
-                    </h3>
+                    <h3 className="truncate text-base font-black">{s.player.name}</h3>
                     {s.isWinner && <span className="text-sm">👑</span>}
                     {!s.isWinner && s.reachedGoal && (
                       <span className="rounded-full bg-gold/15 px-2 py-0.5 text-[0.65rem] font-bold text-gold">
                         {t("board.reached")}
                       </span>
                     )}
+                    <PencilIcon className="ml-auto h-3.5 w-3.5 shrink-0 text-faint" />
                   </div>
 
                   <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-line/10">
@@ -141,9 +143,7 @@ export function Scoreboard({ state, actions, onEnterRound }: ScoreboardProps) {
                 </div>
 
                 <div className="shrink-0 text-right">
-                  <div className="tabular text-2xl font-black leading-none">
-                    {s.total}
-                  </div>
+                  <div className="tabular text-2xl font-black leading-none">{s.total}</div>
                   <div className="text-[0.65rem] font-semibold uppercase text-faint">
                     {t("board.pts")}
                   </div>
@@ -155,14 +155,19 @@ export function Scoreboard({ state, actions, onEnterRound }: ScoreboardProps) {
                   {s.player.rounds.map((r, ri) => (
                     <span
                       key={ri}
-                      className="tabular shrink-0 rounded-md bg-line/10 px-1.5 py-0.5 text-[0.65rem] font-bold text-muted"
+                      className={[
+                        "tabular shrink-0 rounded-md px-1.5 py-0.5 text-[0.65rem] font-bold",
+                        r.busted
+                          ? "bg-red-500/15 text-red-400"
+                          : "bg-line/10 text-muted",
+                      ].join(" ")}
                     >
-                      {r}
+                      {r.busted ? "✕" : r.score}
                     </span>
                   ))}
                 </div>
               )}
-            </motion.div>
+            </motion.button>
           );
         })}
       </div>
@@ -179,6 +184,33 @@ export function Scoreboard({ state, actions, onEnterRound }: ScoreboardProps) {
           </button>
         </div>
       </div>
+
+      {/* Player score editor */}
+      <AnimatePresence>
+        {editingPlayer && (
+          <PlayerEditor
+            player={editingPlayer}
+            onEdit={(roundIndex, result) =>
+              actions.editRound(editingPlayer.id, roundIndex, result)
+            }
+            onClose={() => setEditingId(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* New game confirm */}
+      <ConfirmDialog
+        open={confirmOpen}
+        title={t("confirm.newGameTitle")}
+        message={t("confirm.newGameMsg")}
+        confirmLabel={t("confirm.newGameYes")}
+        cancelLabel={t("common.cancel")}
+        onConfirm={() => {
+          setConfirmOpen(false);
+          actions.newGame();
+        }}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 }

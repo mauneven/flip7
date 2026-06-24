@@ -4,13 +4,13 @@ import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useT } from "@/lib/lang";
 import { computeBreakdown, emptySelection } from "@/lib/scoring";
-import type { Player, RoundSelection } from "@/lib/types";
+import type { Player, RoundResult, RoundSelection } from "@/lib/types";
 import { CardSelector } from "./CardSelector";
 
 interface RoundEntryProps {
   players: Player[];
   roundNumber: number;
-  onCommit: (scores: Record<string, number>) => void;
+  onCommit: (results: Record<string, RoundResult>) => void;
   onCancel: () => void;
 }
 
@@ -23,26 +23,35 @@ export function RoundEntry({
   const { t } = useT();
   const [index, setIndex] = useState(0);
   const [selections, setSelections] = useState<Record<string, RoundSelection>>({});
+  const [busted, setBusted] = useState<Record<string, boolean>>({});
 
   const current = players[index];
   const sel = selections[current.id] ?? emptySelection();
+  const isBusted = busted[current.id] ?? false;
   const breakdown = useMemo(() => computeBreakdown(sel), [sel]);
+  const roundScore = isBusted ? 0 : breakdown.total;
   const isLast = index === players.length - 1;
 
-  const totalFor = (id: string) =>
-    computeBreakdown(selections[id] ?? emptySelection()).total;
-  const entered = (id: string, i: number) => i < index || id in selections;
+  const resultFor = (id: string): RoundResult =>
+    busted[id]
+      ? { score: 0, busted: true }
+      : { score: computeBreakdown(selections[id] ?? emptySelection()).total, busted: false };
+  const entered = (id: string, i: number) => i < index || id in selections || id in busted;
 
-  const setSel = (next: RoundSelection) =>
+  const setSel = (next: RoundSelection) => {
     setSelections((prev) => ({ ...prev, [current.id]: next }));
+    if (isBusted) setBusted((prev) => ({ ...prev, [current.id]: false }));
+  };
+  const toggleBust = () =>
+    setBusted((prev) => ({ ...prev, [current.id]: !prev[current.id] }));
 
   const goNext = () => {
     if (isLast) {
-      const scores: Record<string, number> = {};
+      const results: Record<string, RoundResult> = {};
       players.forEach((p) => {
-        scores[p.id] = computeBreakdown(selections[p.id] ?? emptySelection()).total;
+        results[p.id] = resultFor(p.id);
       });
-      onCommit(scores);
+      onCommit(results);
     } else {
       setIndex((i) => i + 1);
     }
@@ -68,94 +77,121 @@ export function RoundEntry({
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between gap-3 px-5 pt-4">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-faint">
-              {t("round.title", { n: roundNumber })}
-            </p>
-            <h2 className="text-xl font-black leading-tight">{current.name}</h2>
-            <p className="text-xs text-faint">
-              {t("round.player", { i: index + 1, total: players.length })}
-            </p>
+        <div className="shrink-0 px-5 pt-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-faint">
+                {t("round.title", { n: roundNumber })}
+              </p>
+              <h2 className="text-xl font-black leading-tight">{current.name}</h2>
+              <p className="text-xs text-faint">
+                {t("round.player", { i: index + 1, total: players.length })}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onCancel}
+              aria-label={t("round.cancel")}
+              className="grid h-9 w-9 place-items-center rounded-full bg-line/10 text-lg text-muted transition hover:bg-line/20"
+            >
+              ✕
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={onCancel}
-            aria-label={t("round.cancel")}
-            className="grid h-9 w-9 place-items-center rounded-full bg-line/10 text-lg text-muted transition hover:bg-line/20"
-          >
-            ✕
-          </button>
-        </div>
 
-        {/* Player progress chips */}
-        <div className="no-scrollbar mt-3 flex gap-1.5 overflow-x-auto px-5">
-          {players.map((p, i) => {
-            const isCurrent = i === index;
-            const done = entered(p.id, i);
-            return (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => setIndex(i)}
-                className={[
-                  "flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition",
-                  isCurrent
-                    ? "bg-accent text-on-accent"
-                    : done
-                      ? "bg-line/15 text-text"
-                      : "bg-line/5 text-faint",
-                ].join(" ")}
-              >
-                <span className="max-w-[7rem] truncate">{p.name}</span>
-                {done && !isCurrent && (
-                  <span className="tabular rounded-full bg-line/20 px-1.5 text-[0.65rem]">
-                    {totalFor(p.id)}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+          {/* Player progress chips */}
+          <div className="no-scrollbar mt-3 flex gap-1.5 overflow-x-auto pb-3">
+            {players.map((p, i) => {
+              const isCurrent = i === index;
+              const done = entered(p.id, i);
+              const bust = busted[p.id];
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setIndex(i)}
+                  className={[
+                    "flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition",
+                    isCurrent
+                      ? "bg-accent text-on-accent"
+                      : bust
+                        ? "bg-red-500/15 text-red-400"
+                        : done
+                          ? "bg-line/15 text-text"
+                          : "bg-line/5 text-faint",
+                  ].join(" ")}
+                >
+                  <span className="max-w-[7rem] truncate">{p.name}</span>
+                  {done && !isCurrent && (
+                    <span className="tabular rounded-full bg-line/20 px-1.5 text-[0.65rem]">
+                      {bust ? "✕" : resultFor(p.id).score}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Card selection (scrolls) */}
-        <div className="flex-1 overflow-y-auto px-5 py-4">
-          <CardSelector selection={sel} onChange={setSel} />
+        <div className="min-h-0 flex-1 overflow-y-auto border-t border-line/10 px-5 py-4">
+          <button
+            type="button"
+            onClick={toggleBust}
+            className={[
+              "mb-4 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition",
+              isBusted
+                ? "bg-red-500/15 text-red-400 ring-1 ring-red-500/40"
+                : "bg-line/10 text-muted hover:bg-line/20",
+            ].join(" ")}
+          >
+            <span aria-hidden>❄️</span>
+            {t("round.lost")}
+          </button>
+
+          <div className={isBusted ? "pointer-events-none opacity-40" : ""}>
+            <CardSelector selection={sel} onChange={setSel} />
+          </div>
         </div>
 
         {/* Live breakdown + actions */}
-        <div className="border-t border-line/10 bg-line/5 px-5 pb-4 pt-3">
+        <div className="shrink-0 border-t border-line/10 bg-line/5 px-5 pb-4 pt-3">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-1.5 text-sm font-bold text-muted">
-              <span className="tabular rounded-md bg-line/10 px-2 py-0.5">
-                {breakdown.basicSum}
+            {isBusted ? (
+              <span className="rounded-md bg-red-500/15 px-2.5 py-1 text-sm font-bold text-red-400">
+                {t("round.lost")}
               </span>
-              {breakdown.isFlip7 && (
-                <span className="tabular rounded-md bg-gold/15 px-2 py-0.5 text-gold">
-                  +{breakdown.flip7Bonus}
-                </span>
-              )}
-              {breakdown.modifierSum > 0 && (
+            ) : (
+              <div className="flex flex-wrap items-center gap-1.5 text-sm font-bold text-muted">
                 <span className="tabular rounded-md bg-line/10 px-2 py-0.5">
-                  +{breakdown.modifierSum}
+                  {breakdown.basicSum}
                 </span>
-              )}
-              {breakdown.x2Applied && (
-                <span className="rounded-md bg-text px-2 py-0.5 text-bg">×2</span>
-              )}
-            </div>
+                {breakdown.isFlip7 && (
+                  <span className="tabular rounded-md bg-gold/15 px-2 py-0.5 text-gold">
+                    +{breakdown.flip7Bonus}
+                  </span>
+                )}
+                {breakdown.modifierSum > 0 && (
+                  <span className="tabular rounded-md bg-line/10 px-2 py-0.5">
+                    +{breakdown.modifierSum}
+                  </span>
+                )}
+                {breakdown.x2Applied && (
+                  <span className="rounded-md bg-text px-2 py-0.5 text-bg">×2</span>
+                )}
+              </div>
+            )}
             <div className="flex items-baseline gap-1.5">
               <span className="text-xs uppercase tracking-wide text-faint">
                 {t("round.total")}
               </span>
               <motion.span
-                key={breakdown.total}
+                key={roundScore}
                 initial={{ scale: 0.6, opacity: 0, y: 4 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 transition={{ type: "spring", stiffness: 500, damping: 24 }}
                 className="tabular min-w-[2ch] text-right text-3xl font-black text-text"
               >
-                {breakdown.total}
+                {roundScore}
               </motion.span>
             </div>
           </div>
@@ -170,7 +206,10 @@ export function RoundEntry({
             </button>
             <button
               type="button"
-              onClick={() => setSel(emptySelection())}
+              onClick={() => {
+                setSel(emptySelection());
+                setBusted((prev) => ({ ...prev, [current.id]: false }));
+              }}
               className="rounded-xl bg-line/10 px-4 py-3 text-sm font-bold text-faint transition hover:bg-line/20"
             >
               {t("round.clear")}

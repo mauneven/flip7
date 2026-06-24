@@ -66,6 +66,30 @@ const en: Dict = {
   "win.continue": "Continue current game",
   "win.pts": "pts",
   "win.rounds": "{n} rounds",
+
+  "round.lost": "Lost the round",
+  "round.lostShort": "Lost",
+
+  "edit.title": "Edit rounds",
+  "edit.hint": "Tap any score to fix it",
+  "edit.total": "Total",
+  "edit.done": "Done",
+  "edit.lost": "Lost",
+  "edit.empty": "No rounds played yet",
+
+  "confirm.newGameTitle": "Start a new game?",
+  "confirm.newGameMsg": "The current scores will be lost.",
+  "confirm.newGameYes": "New game",
+  "common.cancel": "Cancel",
+
+  "stats.title": "Memorable moments",
+  "stats.bestRound": "Best round",
+  "stats.inRound": "in round {n}",
+  "stats.mostBusts": "Most eliminations",
+  "stats.times": "{n}×",
+  "stats.consistent": "Most consistent",
+  "stats.avg": "{n} avg / round",
+  "stats.roundsPlayed": "Rounds played",
 };
 
 const es: Dict = {
@@ -126,6 +150,30 @@ const es: Dict = {
   "win.continue": "Continuar partida actual",
   "win.pts": "pts",
   "win.rounds": "{n} rondas",
+
+  "round.lost": "Perdió la ronda",
+  "round.lostShort": "Perdió",
+
+  "edit.title": "Editar rondas",
+  "edit.hint": "Toca un puntaje para corregirlo",
+  "edit.total": "Total",
+  "edit.done": "Listo",
+  "edit.lost": "Perdió",
+  "edit.empty": "Aún no hay rondas jugadas",
+
+  "confirm.newGameTitle": "¿Empezar nueva partida?",
+  "confirm.newGameMsg": "Se perderán los puntos actuales.",
+  "confirm.newGameYes": "Nueva partida",
+  "common.cancel": "Cancelar",
+
+  "stats.title": "Momentos memorables",
+  "stats.bestRound": "Mejor ronda",
+  "stats.inRound": "en la ronda {n}",
+  "stats.mostBusts": "Más eliminaciones",
+  "stats.times": "{n}×",
+  "stats.consistent": "Más constante",
+  "stats.avg": "{n} prom. / ronda",
+  "stats.roundsPlayed": "Rondas jugadas",
 };
 
 const fr: Dict = {
@@ -186,6 +234,30 @@ const fr: Dict = {
   "win.continue": "Continuer la partie",
   "win.pts": "pts",
   "win.rounds": "{n} manches",
+
+  "round.lost": "Manche perdue",
+  "round.lostShort": "Perdu",
+
+  "edit.title": "Modifier les manches",
+  "edit.hint": "Touchez un score pour le corriger",
+  "edit.total": "Total",
+  "edit.done": "Terminé",
+  "edit.lost": "Perdu",
+  "edit.empty": "Aucune manche jouée pour l'instant",
+
+  "confirm.newGameTitle": "Nouvelle partie ?",
+  "confirm.newGameMsg": "Les scores actuels seront perdus.",
+  "confirm.newGameYes": "Nouvelle partie",
+  "common.cancel": "Annuler",
+
+  "stats.title": "Moments mémorables",
+  "stats.bestRound": "Meilleure manche",
+  "stats.inRound": "à la manche {n}",
+  "stats.mostBusts": "Plus d'éliminations",
+  "stats.times": "{n}×",
+  "stats.consistent": "Plus régulier",
+  "stats.avg": "{n} moy. / manche",
+  "stats.roundsPlayed": "Manches jouées",
 };
 
 const DICTS: Record<Lang, Dict> = { en, es, fr };

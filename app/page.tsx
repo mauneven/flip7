@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import type { RoundResult } from "@/lib/types";
 import { useGame } from "@/lib/useGame";
 import { SetupScreen } from "@/components/SetupScreen";
 import { Scoreboard } from "@/components/Scoreboard";
@@ -22,8 +23,8 @@ export default function Home() {
     );
   }
 
-  const handleCommit = (scores: Record<string, number>) => {
-    actions.commitRound(scores);
+  const handleCommit = (results: Record<string, RoundResult>) => {
+    actions.commitRound(results);
     setRoundOpen(false);
   };
 

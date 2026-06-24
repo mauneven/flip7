@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useReducer, useState } from "react";
-import type { GameState, Player } from "./types";
+import type { GameState, Player, RoundResult } from "./types";
 import { someoneReachedGoal } from "./scoring";
 
 const STORAGE_KEY = "flip7-game";
@@ -41,7 +41,8 @@ type Action =
   | { type: "RENAME_PLAYER"; id: string; name: string }
   | { type: "SET_GOAL"; goal: number }
   | { type: "START" }
-  | { type: "COMMIT_ROUND"; scores: Record<string, number> }
+  | { type: "COMMIT_ROUND"; results: Record<string, RoundResult> }
+  | { type: "EDIT_ROUND"; playerId: string; roundIndex: number; result: RoundResult }
   | { type: "CONTINUE" }
   | { type: "END_GAME" }
   | { type: "NEW_GAME" };
@@ -87,7 +88,7 @@ function reducer(state: GameState, action: Action): GameState {
     case "COMMIT_ROUND": {
       const players = state.players.map((p) => ({
         ...p,
-        rounds: [...p.rounds, action.scores[p.id] ?? 0],
+        rounds: [...p.rounds, action.results[p.id] ?? { score: 0, busted: false }],
       }));
       const next: GameState = {
         ...state,
@@ -98,6 +99,20 @@ function reducer(state: GameState, action: Action): GameState {
         return { ...next, phase: "finished" };
       }
       return next;
+    }
+
+    case "EDIT_ROUND": {
+      return {
+        ...state,
+        players: state.players.map((p) => {
+          if (p.id !== action.playerId) return p;
+          if (action.roundIndex < 0 || action.roundIndex >= p.rounds.length) return p;
+          const rounds = p.rounds.map((r, i) =>
+            i === action.roundIndex ? action.result : r,
+          );
+          return { ...p, rounds };
+        }),
+      };
     }
 
     case "CONTINUE":
@@ -120,15 +135,42 @@ function reducer(state: GameState, action: Action): GameState {
   }
 }
 
-function isValid(state: unknown): state is GameState {
-  if (!state || typeof state !== "object") return false;
-  const s = state as Partial<GameState>;
-  return (
-    (s.phase === "setup" || s.phase === "playing" || s.phase === "finished") &&
-    Array.isArray(s.players) &&
-    typeof s.scoreGoal === "number" &&
-    typeof s.roundNumber === "number"
-  );
+/** Accepts older saved games (rounds as number[]) and upgrades them. */
+function migrate(raw: unknown): GameState | null {
+  if (!raw || typeof raw !== "object") return null;
+  const s = raw as Partial<GameState> & { players?: unknown };
+  const phase = s.phase;
+  const goal = s.scoreGoal;
+  const roundNumber = s.roundNumber;
+  if (
+    (phase !== "setup" && phase !== "playing" && phase !== "finished") ||
+    !Array.isArray(s.players) ||
+    typeof goal !== "number" ||
+    typeof roundNumber !== "number"
+  ) {
+    return null;
+  }
+  const players: Player[] = (s.players as unknown[]).map((pp) => {
+    const p = pp as { id?: string; name?: string; rounds?: unknown[] };
+    const rounds: RoundResult[] = Array.isArray(p.rounds)
+      ? p.rounds.map((r) =>
+          typeof r === "number"
+            ? { score: r, busted: false }
+            : {
+                score: Number((r as RoundResult)?.score) || 0,
+                busted: Boolean((r as RoundResult)?.busted),
+              },
+        )
+      : [];
+    return { id: String(p.id ?? makeId()), name: String(p.name ?? ""), rounds };
+  });
+  return {
+    phase,
+    players,
+    scoreGoal: goal,
+    roundNumber,
+    winnerAcknowledged: Boolean(s.winnerAcknowledged),
+  };
 }
 
 export interface GameActions {
@@ -137,7 +179,8 @@ export interface GameActions {
   renamePlayer: (id: string, name: string) => void;
   setGoal: (goal: number) => void;
   start: () => void;
-  commitRound: (scores: Record<string, number>) => void;
+  commitRound: (results: Record<string, RoundResult>) => void;
+  editRound: (playerId: string, roundIndex: number, result: RoundResult) => void;
   continueGame: () => void;
   endGame: () => void;
   newGame: () => void;
@@ -151,13 +194,12 @@ export function useGame(): {
   const [state, dispatch] = useReducer(reducer, undefined, initialState);
   const [hydrated, setHydrated] = useState(false);
 
-  // Load persisted game once on mount.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const parsed = JSON.parse(raw);
-        if (isValid(parsed)) dispatch({ type: "HYDRATE", state: parsed });
+        const migrated = migrate(JSON.parse(raw));
+        if (migrated) dispatch({ type: "HYDRATE", state: migrated });
       }
     } catch {
       /* ignore corrupted storage */
@@ -165,7 +207,6 @@ export function useGame(): {
     setHydrated(true);
   }, []);
 
-  // Persist after hydration whenever state changes.
   useEffect(() => {
     if (!hydrated) return;
     try {
@@ -185,7 +226,13 @@ export function useGame(): {
     setGoal: useCallback((goal: number) => dispatch({ type: "SET_GOAL", goal }), []),
     start: useCallback(() => dispatch({ type: "START" }), []),
     commitRound: useCallback(
-      (scores: Record<string, number>) => dispatch({ type: "COMMIT_ROUND", scores }),
+      (results: Record<string, RoundResult>) =>
+        dispatch({ type: "COMMIT_ROUND", results }),
+      [],
+    ),
+    editRound: useCallback(
+      (playerId: string, roundIndex: number, result: RoundResult) =>
+        dispatch({ type: "EDIT_ROUND", playerId, roundIndex, result }),
       [],
     ),
     continueGame: useCallback(() => dispatch({ type: "CONTINUE" }), []),

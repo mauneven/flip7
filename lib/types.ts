@@ -2,11 +2,19 @@ export type Lang = "en" | "es" | "fr";
 
 export type GamePhase = "setup" | "playing" | "finished";
 
+/** Result a player recorded for a single round. */
+export interface RoundResult {
+  /** Points scored that round (0 when busted). */
+  score: number;
+  /** True when the player lost the round (busted / frozen out). */
+  busted: boolean;
+}
+
 export interface Player {
   id: string;
   name: string;
-  /** Score recorded for each completed round, in order. */
-  rounds: number[];
+  /** Result for each completed round, in order. */
+  rounds: RoundResult[];
 }
 
 /** The cards a single player flipped during one round. */
