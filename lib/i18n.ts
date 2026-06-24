@@ -10,6 +10,8 @@ type Dict = Record<string, string>;
 
 const en: Dict = {
   "app.subtitle": "Score tracker",
+  "menu.theme": "Theme",
+  "menu.language": "Language",
   "setup.title": "New game",
   "setup.players": "Players",
   "setup.playerName": "Player name",
@@ -67,6 +69,8 @@ const en: Dict = {
 
 const es: Dict = {
   "app.subtitle": "Marcador",
+  "menu.theme": "Tema",
+  "menu.language": "Idioma",
   "setup.title": "Nueva partida",
   "setup.players": "Jugadores",
   "setup.playerName": "Nombre del jugador",
@@ -124,6 +128,8 @@ const es: Dict = {
 
 const fr: Dict = {
   "app.subtitle": "Tableau des scores",
+  "menu.theme": "Thème",
+  "menu.language": "Langue",
   "setup.title": "Nouvelle partie",
   "setup.players": "Joueurs",
   "setup.playerName": "Nom du joueur",

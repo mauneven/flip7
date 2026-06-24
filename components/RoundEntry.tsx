@@ -22,9 +22,7 @@ export function RoundEntry({
 }: RoundEntryProps) {
   const { t } = useT();
   const [index, setIndex] = useState(0);
-  const [selections, setSelections] = useState<Record<string, RoundSelection>>(
-    {},
-  );
+  const [selections, setSelections] = useState<Record<string, RoundSelection>>({});
 
   const current = players[index];
   const sel = selections[current.id] ?? emptySelection();
@@ -42,9 +40,7 @@ export function RoundEntry({
     if (isLast) {
       const scores: Record<string, number> = {};
       players.forEach((p) => {
-        scores[p.id] = computeBreakdown(
-          selections[p.id] ?? emptySelection(),
-        ).total;
+        scores[p.id] = computeBreakdown(selections[p.id] ?? emptySelection()).total;
       });
       onCommit(scores);
     } else {
@@ -61,24 +57,24 @@ export function RoundEntry({
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-40 flex items-end justify-center sm:items-center"
     >
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onCancel} />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onCancel} />
 
       <motion.div
         initial={{ y: "100%", opacity: 0.5 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: "100%", opacity: 0.5 }}
         transition={{ type: "spring", stiffness: 320, damping: 34 }}
-        className="glass-strong relative flex max-h-[94vh] w-full max-w-lg flex-col overflow-hidden rounded-t-3xl border-x-0 border-b-0 shadow-2xl sm:rounded-3xl sm:border-x sm:border-b"
+        className="relative flex max-h-[94vh] w-full max-w-lg flex-col overflow-hidden rounded-t-3xl border border-line/10 bg-surface shadow-2xl sm:rounded-3xl"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         {/* Header */}
         <div className="flex items-center justify-between gap-3 px-5 pt-4">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-white/40">
+            <p className="text-xs font-bold uppercase tracking-widest text-faint">
               {t("round.title", { n: roundNumber })}
             </p>
             <h2 className="text-xl font-black leading-tight">{current.name}</h2>
-            <p className="text-xs text-white/40">
+            <p className="text-xs text-faint">
               {t("round.player", { i: index + 1, total: players.length })}
             </p>
           </div>
@@ -86,7 +82,7 @@ export function RoundEntry({
             type="button"
             onClick={onCancel}
             aria-label={t("round.cancel")}
-            className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-lg text-white/70 hover:bg-white/20"
+            className="grid h-9 w-9 place-items-center rounded-full bg-line/10 text-lg text-muted transition hover:bg-line/20"
           >
             ✕
           </button>
@@ -105,15 +101,15 @@ export function RoundEntry({
                 className={[
                   "flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition",
                   isCurrent
-                    ? "bg-white text-slate-900"
+                    ? "bg-accent text-on-accent"
                     : done
-                      ? "bg-emerald-400/20 text-emerald-200"
-                      : "bg-white/10 text-white/50",
+                      ? "bg-line/15 text-text"
+                      : "bg-line/5 text-faint",
                 ].join(" ")}
               >
                 <span className="max-w-[7rem] truncate">{p.name}</span>
                 {done && !isCurrent && (
-                  <span className="tabular rounded-full bg-emerald-400/30 px-1.5 text-[0.65rem]">
+                  <span className="tabular rounded-full bg-line/20 px-1.5 text-[0.65rem]">
                     {totalFor(p.id)}
                   </span>
                 )}
@@ -128,30 +124,28 @@ export function RoundEntry({
         </div>
 
         {/* Live breakdown + actions */}
-        <div className="border-t border-white/10 bg-black/30 px-5 pb-4 pt-3">
+        <div className="border-t border-line/10 bg-line/5 px-5 pb-4 pt-3">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-1.5 text-sm font-bold text-white/70">
-              <span className="tabular rounded-md bg-white/10 px-2 py-0.5">
+            <div className="flex flex-wrap items-center gap-1.5 text-sm font-bold text-muted">
+              <span className="tabular rounded-md bg-line/10 px-2 py-0.5">
                 {breakdown.basicSum}
               </span>
               {breakdown.isFlip7 && (
-                <span className="tabular rounded-md bg-pink-500/25 px-2 py-0.5 text-pink-200">
+                <span className="tabular rounded-md bg-gold/15 px-2 py-0.5 text-gold">
                   +{breakdown.flip7Bonus}
                 </span>
               )}
               {breakdown.modifierSum > 0 && (
-                <span className="tabular rounded-md bg-amber-400/25 px-2 py-0.5 text-amber-200">
+                <span className="tabular rounded-md bg-line/10 px-2 py-0.5">
                   +{breakdown.modifierSum}
                 </span>
               )}
               {breakdown.x2Applied && (
-                <span className="rounded-md bg-fuchsia-500/30 px-2 py-0.5 text-fuchsia-100">
-                  ×2
-                </span>
+                <span className="rounded-md bg-text px-2 py-0.5 text-bg">×2</span>
               )}
             </div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-xs uppercase tracking-wide text-white/40">
+              <span className="text-xs uppercase tracking-wide text-faint">
                 {t("round.total")}
               </span>
               <motion.span
@@ -159,7 +153,7 @@ export function RoundEntry({
                 initial={{ scale: 0.6, opacity: 0, y: 4 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 transition={{ type: "spring", stiffness: 500, damping: 24 }}
-                className="tabular min-w-[2ch] text-right text-3xl font-black text-white"
+                className="tabular min-w-[2ch] text-right text-3xl font-black text-text"
               >
                 {breakdown.total}
               </motion.span>
@@ -170,26 +164,21 @@ export function RoundEntry({
             <button
               type="button"
               onClick={goBack}
-              className="rounded-xl bg-white/10 px-4 py-3 text-sm font-bold text-white/80 hover:bg-white/20"
+              className="rounded-xl bg-line/10 px-4 py-3 text-sm font-bold text-muted transition hover:bg-line/20"
             >
               {index === 0 ? t("round.cancel") : t("round.back")}
             </button>
             <button
               type="button"
               onClick={() => setSel(emptySelection())}
-              className="rounded-xl bg-white/10 px-4 py-3 text-sm font-bold text-white/60 hover:bg-white/20"
+              className="rounded-xl bg-line/10 px-4 py-3 text-sm font-bold text-faint transition hover:bg-line/20"
             >
               {t("round.clear")}
             </button>
             <button
               type="button"
               onClick={goNext}
-              className={[
-                "flex-1 rounded-xl px-4 py-3 text-sm font-black text-white shadow-lg transition active:scale-[0.98]",
-                isLast
-                  ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:brightness-110"
-                  : "bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:brightness-110",
-              ].join(" ")}
+              className="flex-1 rounded-xl bg-accent px-4 py-3 text-sm font-black text-on-accent shadow-sm transition hover:bg-accent-press active:scale-[0.98]"
             >
               {isLast ? t("round.finish") : t("round.next")}
             </button>
