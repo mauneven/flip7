@@ -36,10 +36,10 @@ export function SetupScreen({ state, actions }: SetupScreenProps) {
     <div className="mx-auto flex min-h-[100svh] w-full max-w-lg flex-col px-4 pb-10 pt-6">
       <header className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-4xl font-black tracking-tight sm:text-5xl">
+          <h1 className="font-serif text-4xl font-black tracking-tight sm:text-5xl">
             FLIP <span className="text-accent">7</span>
           </h1>
-          <p className="text-sm font-semibold text-faint">{t("app.subtitle")}</p>
+          <p className="text-sm font-medium text-faint">{t("app.subtitle")}</p>
         </div>
         <Menu />
       </header>
@@ -50,7 +50,7 @@ export function SetupScreen({ state, actions }: SetupScreenProps) {
         transition={{ duration: 0.35 }}
         className="mt-7 rounded-3xl border border-line/10 bg-surface p-5 shadow-sm"
       >
-        <h2 className="text-lg font-black">{t("setup.title")}</h2>
+        <h2 className="font-serif text-2xl font-bold">{t("setup.title")}</h2>
 
         {/* Players */}
         <div className="mt-4">

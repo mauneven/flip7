@@ -8,7 +8,7 @@ import type { GameState } from "@/lib/types";
 import type { GameActions } from "@/lib/useGame";
 import { getStandings, getWinners } from "@/lib/scoring";
 
-const CONFETTI_COLORS = ["#3b82f6", "#fabe46", "#e4e4e7", "#a1a1aa", "#60a5fa"];
+const CONFETTI_COLORS = ["#d3774f", "#d1a24a", "#e7e0d4", "#be5a3c", "#a8a296"];
 const MEDALS = ["🥇", "🥈", "🥉"];
 const PEDESTAL: Record<number, string> = { 1: "h-28", 2: "h-20", 3: "h-14" };
 
@@ -86,12 +86,14 @@ export function WinCelebration({ state, actions }: WinCelebrationProps) {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="mt-3 text-center text-3xl font-black sm:text-4xl"
+          className="mt-3 text-center font-serif text-4xl font-black sm:text-5xl"
         >
           {isTie ? t("win.tie") : headline}
         </motion.h1>
         {isTie && (
-          <p className="mt-1 text-center text-lg font-black text-gold">{headline}</p>
+          <p className="mt-1 text-center font-serif text-xl font-bold text-gold">
+            {headline}
+          </p>
         )}
         <p className="mt-1 text-sm font-semibold text-faint">
           {t("win.subtitle", { goal: state.scoreGoal })}

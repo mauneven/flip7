@@ -2,38 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ---- Theme tokens ---------------------------------------------------- */
+/* ---- Theme tokens (warm, Anthropic-inspired) ------------------------- */
 /* Channels are space-separated RGB so Tailwind's <alpha-value> works,
    e.g. bg-line/10, border-line/10, bg-accent/10. */
 
 :root,
 .dark {
-  --bg: 10 10 12;
-  --surface: 23 23 27;
-  --surface-2: 33 33 39;
-  --line: 255 255 255; /* used at low opacity for borders & subtle fills */
-  --text: 244 244 246;
-  --muted: 161 161 170;
-  --faint: 112 112 122;
-  --accent: 59 130 246; /* blue-500 */
-  --accent-press: 37 99 235; /* blue-600 */
+  --bg: 26 24 21; /* warm near-black */
+  --surface: 36 33 29;
+  --surface-2: 47 43 38;
+  --line: 250 247 240; /* warm white, used at low opacity */
+  --text: 237 233 225;
+  --muted: 170 162 150;
+  --faint: 122 114 103;
+  --accent: 211 119 79; /* warm coral */
+  --accent-press: 190 104 68;
   --on-accent: 255 255 255;
-  --gold: 250 190 70;
+  --gold: 209 162 74;
   color-scheme: dark;
 }
 
 .light {
-  --bg: 248 248 249;
-  --surface: 255 255 255;
-  --surface-2: 243 243 245;
-  --line: 17 17 20; /* near-black, used at low opacity */
-  --text: 24 24 27;
-  --muted: 82 82 91;
-  --faint: 140 140 150;
-  --accent: 37 99 235; /* blue-600 */
-  --accent-press: 29 78 216; /* blue-700 */
+  --bg: 243 241 234; /* warm paper */
+  --surface: 252 251 247;
+  --surface-2: 236 233 224;
+  --line: 32 28 22; /* warm near-black, used at low opacity */
+  --text: 38 35 30;
+  --muted: 107 102 92;
+  --faint: 150 143 131;
+  --accent: 190 90 60; /* terracotta */
+  --accent-press: 165 76 48;
   --on-accent: 255 255 255;
-  --gold: 202 138 4; /* amber-600, readable on light */
+  --gold: 176 132 47;
   color-scheme: light;
 }
 
@@ -47,6 +47,11 @@ body {
   color: rgb(var(--text));
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Serif display gets a touch tighter tracking for an editorial feel. */
+.font-serif {
+  letter-spacing: -0.01em;
 }
 
 .tabular {

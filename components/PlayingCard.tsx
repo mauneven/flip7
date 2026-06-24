@@ -17,7 +17,7 @@ export interface PlayingCardProps {
 
 const TEXT_SIZE: Record<NonNullable<PlayingCardProps["size"]>, string> = {
   sm: "text-base rounded-lg",
-  md: "text-2xl sm:text-[1.7rem] rounded-xl",
+  md: "text-3xl sm:text-4xl rounded-2xl",
 };
 
 export function PlayingCard({
@@ -57,10 +57,10 @@ export function PlayingCard({
     >
       {corner && (
         <>
-          <span className="absolute left-1 top-0.5 text-[0.6rem] font-extrabold leading-none opacity-60">
+          <span className="absolute left-1.5 top-1 text-[0.7rem] font-extrabold leading-none opacity-60">
             {label}
           </span>
-          <span className="absolute bottom-0.5 right-1 rotate-180 text-[0.6rem] font-extrabold leading-none opacity-60">
+          <span className="absolute bottom-1 right-1.5 rotate-180 text-[0.7rem] font-extrabold leading-none opacity-60">
             {label}
           </span>
         </>

@@ -33,7 +33,7 @@ export function Scoreboard({ state, actions, onEnterRound }: ScoreboardProps) {
       {/* Header */}
       <header className="space-y-3">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="whitespace-nowrap text-2xl font-black tracking-tight">
+          <h1 className="whitespace-nowrap font-serif text-3xl font-black tracking-tight">
             FLIP <span className="text-accent">7</span>
           </h1>
           <Menu onNewGame={confirmNewGame} />

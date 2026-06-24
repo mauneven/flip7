@@ -10,7 +10,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Nunito", "system-ui", "-apple-system", "sans-serif"],
+        sans: ["Inter", "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
+        serif: ["Fraunces", "Georgia", "Cambria", "Times New Roman", "serif"],
       },
       colors: {
         // Semantic tokens, driven by CSS variables (see globals.css).

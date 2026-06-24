@@ -15,7 +15,7 @@ export default function Home() {
   if (!hydrated) {
     return (
       <main className="grid min-h-[100svh] place-items-center">
-        <h1 className="animate-pulse text-4xl font-black tracking-tight">
+        <h1 className="animate-pulse font-serif text-4xl font-black tracking-tight">
           FLIP <span className="text-accent">7</span>
         </h1>
       </main>

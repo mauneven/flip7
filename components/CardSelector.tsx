@@ -38,15 +38,15 @@ export function CardSelector({ selection, onChange }: CardSelectorProps) {
   const toggleX2 = () => onChange({ ...selection, x2: !selection.x2 });
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Number cards */}
       <section>
-        <div className="mb-2 flex items-center justify-between gap-2">
+        <div className="mb-2.5 flex items-center justify-between gap-2">
           <div>
-            <h3 className="text-sm font-extrabold uppercase tracking-wider text-text">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-text">
               {t("round.basics")}
             </h3>
-            <p className="text-[0.7rem] text-faint">{t("round.basicsHint")}</p>
+            <p className="text-xs text-faint">{t("round.basicsHint")}</p>
           </div>
           <div className="flex items-center gap-2">
             <AnimatePresence>
@@ -55,7 +55,7 @@ export function CardSelector({ selection, onChange }: CardSelectorProps) {
                   initial={{ scale: 0.6, opacity: 0, y: -4 }}
                   animate={{ scale: 1, opacity: 1, y: 0 }}
                   exit={{ scale: 0.6, opacity: 0 }}
-                  className="rounded-full bg-gold/15 px-2.5 py-1 text-[0.7rem] font-black uppercase text-gold"
+                  className="rounded-full bg-gold/15 px-2.5 py-1 text-[0.7rem] font-bold uppercase text-gold"
                 >
                   {t("round.flip7")} +{FLIP7_BONUS}
                 </motion.span>
@@ -66,7 +66,7 @@ export function CardSelector({ selection, onChange }: CardSelectorProps) {
             </span>
           </div>
         </div>
-        <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+        <div className="grid grid-cols-5 gap-2.5">
           {BASIC_CARDS.map((n) => (
             <PlayingCard
               key={n}
@@ -83,13 +83,13 @@ export function CardSelector({ selection, onChange }: CardSelectorProps) {
 
       {/* Bonus + multiplier cards */}
       <section>
-        <h3 className="mb-2 text-sm font-extrabold uppercase tracking-wider text-text">
+        <h3 className="mb-2.5 text-sm font-bold uppercase tracking-wider text-text">
           {t("round.modifiers")}{" "}
-          <span className="font-bold normal-case text-faint">
+          <span className="font-medium normal-case tracking-normal text-faint">
             · {t("round.multiplier")}
           </span>
         </h3>
-        <div className="grid grid-cols-6 gap-1.5 sm:gap-2">
+        <div className="grid grid-cols-5 gap-2.5">
           {MODIFIER_CARDS.map((n) => (
             <PlayingCard
               key={n}
@@ -107,6 +107,9 @@ export function CardSelector({ selection, onChange }: CardSelectorProps) {
             onClick={toggleX2}
             ariaLabel={t("round.multiplier")}
           />
+          <div className="col-span-4 flex items-center">
+            <p className="text-sm font-medium text-muted">{t("round.x2Hint")}</p>
+          </div>
         </div>
       </section>
     </div>
