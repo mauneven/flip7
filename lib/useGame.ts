@@ -158,6 +158,10 @@ function migrate(raw: unknown): GameState | null {
             : {
                 score: Number((r as RoundResult)?.score) || 0,
                 busted: Boolean((r as RoundResult)?.busted),
+                basics:
+                  typeof (r as RoundResult)?.basics === "number"
+                    ? (r as RoundResult).basics
+                    : undefined,
               },
         )
       : [];

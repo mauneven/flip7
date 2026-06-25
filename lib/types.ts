@@ -8,6 +8,8 @@ export interface RoundResult {
   score: number;
   /** True when the player lost the round (busted / frozen out). */
   busted: boolean;
+  /** Number of basic (number) cards kept that round, when known. */
+  basics?: number;
 }
 
 export interface Player {

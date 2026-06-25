@@ -105,16 +105,18 @@ export function someoneReachedGoal(state: GameState): boolean {
 
 export interface GameStats {
   bestRound: { name: string; score: number; round: number } | null;
-  mostBusts: { name: string; count: number } | null;
   mostConsistent: { name: string; avg: number } | null;
+  mostCards: { name: string; count: number } | null;
+  mostZeros: { name: string; count: number } | null;
   roundsPlayed: number;
 }
 
 /** Fun "memorable moments" computed from the recorded rounds. */
 export function getGameStats(state: GameState): GameStats {
   let bestRound: GameStats["bestRound"] = null;
-  let mostBusts: GameStats["mostBusts"] = null;
   let mostConsistent: GameStats["mostConsistent"] = null;
+  let mostCards: GameStats["mostCards"] = null;
+  let mostZeros: GameStats["mostZeros"] = null;
   let roundsPlayed = 0;
 
   for (const p of state.players) {
@@ -126,18 +128,25 @@ export function getGameStats(state: GameState): GameStats {
       }
     });
 
-    const busts = p.rounds.filter((r) => r.busted).length;
-    if (busts > 0 && (!mostBusts || busts > mostBusts.count)) {
-      mostBusts = { name: p.name, count: busts };
-    }
-
     if (p.rounds.length > 0) {
       const avg = Math.round(playerTotal(p) / p.rounds.length);
       if (!mostConsistent || avg > mostConsistent.avg) {
         mostConsistent = { name: p.name, avg };
       }
     }
+
+    // most number cards collected across the game (when card counts are known)
+    const cards = p.rounds.reduce((a, r) => a + (r.basics ?? 0), 0);
+    if (cards > 0 && (!mostCards || cards > mostCards.count)) {
+      mostCards = { name: p.name, count: cards };
+    }
+
+    // most zero-point rounds (busts and any 0 round)
+    const zeros = p.rounds.filter((r) => r.score === 0).length;
+    if (zeros > 0 && (!mostZeros || zeros > mostZeros.count)) {
+      mostZeros = { name: p.name, count: zeros };
+    }
   }
 
-  return { bestRound, mostBusts, mostConsistent, roundsPlayed };
+  return { bestRound, mostConsistent, mostCards, mostZeros, roundsPlayed };
 }

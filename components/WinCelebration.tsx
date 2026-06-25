@@ -203,11 +203,18 @@ export function WinCelebration({ state, actions }: WinCelebrationProps) {
                 value={`${stats.mostConsistent.name} · ${t("stats.avg", { n: stats.mostConsistent.avg })}`}
               />
             )}
-            {stats.mostBusts && (
+            {stats.mostCards && (
               <StatRow
-                emoji="❄️"
-                label={t("stats.mostBusts")}
-                value={`${stats.mostBusts.name} · ${t("stats.times", { n: stats.mostBusts.count })}`}
+                emoji="🃏"
+                label={t("stats.mostCards")}
+                value={`${stats.mostCards.name} · ${t("stats.cards", { n: stats.mostCards.count })}`}
+              />
+            )}
+            {stats.mostZeros && (
+              <StatRow
+                emoji="0️⃣"
+                label={t("stats.mostZeros")}
+                value={`${stats.mostZeros.name} · ${t("stats.times", { n: stats.mostZeros.count })}`}
               />
             )}
             {stats.roundsPlayed > 0 && (

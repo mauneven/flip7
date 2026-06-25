@@ -77,6 +77,7 @@ export function PlayerEditor({ player, onEdit, onClose }: PlayerEditorProps) {
                       onEdit(i, {
                         score: Math.max(0, parseInt(e.target.value || "0", 10) || 0),
                         busted: false,
+                        basics: r.basics,
                       })
                     }
                     className="tabular w-20 rounded-lg border border-line/10 bg-surface px-2.5 py-2 text-base font-black text-text outline-none focus:border-accent disabled:opacity-40"
@@ -84,7 +85,11 @@ export function PlayerEditor({ player, onEdit, onClose }: PlayerEditorProps) {
                   <button
                     type="button"
                     onClick={() =>
-                      onEdit(i, { score: 0, busted: !r.busted })
+                      onEdit(i, {
+                        score: 0,
+                        busted: !r.busted,
+                        basics: r.busted ? r.basics : 0,
+                      })
                     }
                     className={[
                       "ml-auto shrink-0 rounded-lg px-3 py-2 text-xs font-bold transition",

@@ -32,10 +32,11 @@ export function RoundEntry({
   const roundScore = isBusted ? 0 : breakdown.total;
   const isLast = index === players.length - 1;
 
-  const resultFor = (id: string): RoundResult =>
-    busted[id]
-      ? { score: 0, busted: true }
-      : { score: computeBreakdown(selections[id] ?? emptySelection()).total, busted: false };
+  const resultFor = (id: string): RoundResult => {
+    if (busted[id]) return { score: 0, busted: true, basics: 0 };
+    const s = selections[id] ?? emptySelection();
+    return { score: computeBreakdown(s).total, busted: false, basics: s.basics.length };
+  };
   const entered = (id: string, i: number) => i < index || id in selections || id in busted;
 
   const setSel = (next: RoundSelection) => {
