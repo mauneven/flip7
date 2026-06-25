@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useT } from "@/lib/lang";
 import type { GameState } from "@/lib/types";
-import { MAX_PLAYERS, MIN_PLAYERS, type GameActions } from "@/lib/useGame";
+import { MIN_PLAYERS, type GameActions } from "@/lib/useGame";
 import { Menu } from "./Menu";
 
 const GOAL_PRESETS = [100, 150, 200, 250];
@@ -27,7 +27,7 @@ export function SetupScreen({ state, actions }: SetupScreenProps) {
 
   const addDraft = () => {
     const name = draft.trim();
-    if (!name || state.players.length >= MAX_PLAYERS) return;
+    if (!name) return;
     actions.addPlayer(name);
     setDraft("");
   };
@@ -59,7 +59,7 @@ export function SetupScreen({ state, actions }: SetupScreenProps) {
               {t("setup.players")}
             </label>
             <span className="tabular text-xs font-bold text-faint">
-              {state.players.length}/{MAX_PLAYERS}
+              {state.players.length}
             </span>
           </div>
 
@@ -95,31 +95,30 @@ export function SetupScreen({ state, actions }: SetupScreenProps) {
               ))}
             </AnimatePresence>
 
-            {state.players.length < MAX_PLAYERS && (
-              <div className="flex items-center gap-2 pt-1">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-line/5 text-faint">
-                  +
-                </span>
-                <input
-                  value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") addDraft();
-                  }}
-                  placeholder={t("setup.playerName")}
-                  className="min-w-0 flex-1 rounded-xl border border-dashed border-line/20 bg-transparent px-3 py-2.5 text-base font-semibold text-text outline-none transition placeholder:text-faint focus:border-accent"
-                />
-                <button
-                  type="button"
-                  onClick={addDraft}
-                  disabled={!draft.trim()}
-                  className="shrink-0 rounded-xl bg-line/10 px-3 py-2.5 text-sm font-black text-text transition hover:bg-line/20 disabled:opacity-30"
-                >
-                  {t("setup.add")}
-                </button>
-              </div>
-            )}
+            <div className="flex items-center gap-2 pt-1">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-line/5 text-faint">
+                +
+              </span>
+              <input
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") addDraft();
+                }}
+                placeholder={t("setup.playerName")}
+                className="min-w-0 flex-1 rounded-xl border border-dashed border-line/20 bg-transparent px-3 py-2.5 text-base font-semibold text-text outline-none transition placeholder:text-faint focus:border-accent"
+              />
+              <button
+                type="button"
+                onClick={addDraft}
+                disabled={!draft.trim()}
+                className="shrink-0 rounded-xl bg-line/10 px-3 py-2.5 text-sm font-black text-text transition hover:bg-line/20 disabled:opacity-30"
+              >
+                {t("setup.add")}
+              </button>
+            </div>
           </div>
+          <p className="mt-2 text-[0.7rem] text-faint">{t("setup.maxRec")}</p>
         </div>
 
         {/* Score goal */}

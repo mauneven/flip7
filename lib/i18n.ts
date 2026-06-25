@@ -21,6 +21,7 @@ const en: Dict = {
   "setup.start": "Start game",
   "setup.minPlayers": "Add at least 2 players to start",
   "setup.duplicate": "Player names must be different",
+  "setup.maxRec": "Unlimited players — 12 recommended",
 
   "board.round": "Round {n}",
   "board.goal": "Goal {n}",
@@ -105,6 +106,7 @@ const es: Dict = {
   "setup.start": "Empezar partida",
   "setup.minPlayers": "Añade al menos 2 jugadores para empezar",
   "setup.duplicate": "Los nombres deben ser diferentes",
+  "setup.maxRec": "Jugadores ilimitados — 12 recomendado",
 
   "board.round": "Ronda {n}",
   "board.goal": "Meta {n}",
@@ -189,6 +191,7 @@ const fr: Dict = {
   "setup.start": "Commencer la partie",
   "setup.minPlayers": "Ajoutez au moins 2 joueurs pour commencer",
   "setup.duplicate": "Les noms doivent être différents",
+  "setup.maxRec": "Joueurs illimités — 12 recommandés",
 
   "board.round": "Manche {n}",
   "board.goal": "Objectif {n}",

@@ -15,8 +15,11 @@ export function CardSelector({ selection, onChange }: CardSelectorProps) {
   const { t } = useT();
   const isFlip7 = selection.basics.length >= FLIP7_COUNT;
 
+  const basicsFull = selection.basics.length >= FLIP7_COUNT;
+
   const toggleBasic = (n: number) => {
     const has = selection.basics.includes(n);
+    if (!has && basicsFull) return; // never more than 7 number cards
     onChange({
       ...selection,
       basics: has
@@ -48,23 +51,31 @@ export function CardSelector({ selection, onChange }: CardSelectorProps) {
             </h3>
             <p className="text-xs text-faint">{t("round.basicsHint")}</p>
           </div>
-          <div className="flex items-center gap-2">
-            <AnimatePresence>
-              {isFlip7 && (
-                <motion.span
-                  initial={{ scale: 0.6, opacity: 0, y: -4 }}
-                  animate={{ scale: 1, opacity: 1, y: 0 }}
-                  exit={{ scale: 0.6, opacity: 0 }}
-                  className="rounded-full bg-gold/15 px-2.5 py-1 text-[0.7rem] font-bold uppercase text-gold"
-                >
-                  {t("round.flip7")} +{FLIP7_BONUS}
-                </motion.span>
-              )}
-            </AnimatePresence>
-            <span className="tabular rounded-full bg-line/10 px-2 py-1 text-[0.7rem] font-bold text-muted">
-              {selection.basics.length}/{FLIP7_COUNT}
-            </span>
-          </div>
+          <AnimatePresence mode="wait" initial={false}>
+            {isFlip7 ? (
+              <motion.span
+                key="flip7"
+                initial={{ scale: 0.4, opacity: 0 }}
+                animate={{ scale: [0.4, 1.18, 1], opacity: 1 }}
+                exit={{ scale: 0.4, opacity: 0 }}
+                transition={{ duration: 0.45, ease: "easeOut" }}
+                className="shrink-0 rounded-full bg-gold/20 px-3 py-1 text-[0.72rem] font-black uppercase text-gold ring-1 ring-gold/40"
+              >
+                {t("round.flip7")} +{FLIP7_BONUS}
+              </motion.span>
+            ) : (
+              <motion.span
+                key="count"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                className="tabular shrink-0 rounded-full bg-line/10 px-2.5 py-1 text-[0.72rem] font-bold text-muted"
+              >
+                {selection.basics.length}/{FLIP7_COUNT}
+              </motion.span>
+            )}
+          </AnimatePresence>
         </div>
         <div className="grid grid-cols-5 gap-2.5">
           {BASIC_CARDS.map((n) => (
@@ -74,6 +85,7 @@ export function CardSelector({ selection, onChange }: CardSelectorProps) {
               corner
               variant="number"
               selected={selection.basics.includes(n)}
+              disabled={!selection.basics.includes(n) && basicsFull}
               onClick={() => toggleBasic(n)}
               ariaLabel={`${t("round.basics")} ${n}`}
               className={n === 10 ? "col-start-2" : ""}

@@ -14,6 +14,7 @@ export interface PlayingCardProps {
   size?: "sm" | "md";
   ariaLabel?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 const TEXT_SIZE: Record<NonNullable<PlayingCardProps["size"]>, string> = {
@@ -30,8 +31,9 @@ export function PlayingCard({
   size = "md",
   ariaLabel,
   className = "",
+  disabled = false,
 }: PlayingCardProps) {
-  const interactive = typeof onClick === "function";
+  const interactive = typeof onClick === "function" && !disabled;
 
   const selectedClasses =
     variant === "x2"
@@ -54,7 +56,11 @@ export function PlayingCard({
         selected
           ? selectedClasses
           : "border-line/10 bg-surface2 text-faint",
-        interactive ? "cursor-pointer" : "cursor-default",
+        disabled
+          ? "cursor-not-allowed opacity-40"
+          : interactive
+            ? "cursor-pointer"
+            : "cursor-default",
         className,
       ].join(" ")}
     >

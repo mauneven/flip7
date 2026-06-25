@@ -7,7 +7,8 @@ import { someoneReachedGoal } from "./scoring";
 const STORAGE_KEY = "flip7-game";
 const DEFAULT_GOAL = 200;
 export const MIN_PLAYERS = 2;
-export const MAX_PLAYERS = 12;
+/** Soft recommendation surfaced in the UI; the real number is unlimited. */
+export const RECOMMENDED_PLAYERS = 12;
 
 function makeId(): string {
   try {
@@ -52,10 +53,8 @@ function reducer(state: GameState, action: Action): GameState {
     case "HYDRATE":
       return action.state;
 
-    case "ADD_PLAYER": {
-      if (state.players.length >= MAX_PLAYERS) return state;
+    case "ADD_PLAYER":
       return { ...state, players: [...state.players, newPlayer(action.name)] };
-    }
 
     case "REMOVE_PLAYER":
       return {

@@ -33,7 +33,7 @@ export function PlayerEditor({ player, onEdit, onClose }: PlayerEditorProps) {
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         {/* Header */}
-        <div className="shrink-0 px-5 pt-4">
+        <div className="shrink-0 px-5 pb-4 pt-4">
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-xs font-bold uppercase tracking-widest text-faint">
@@ -50,7 +50,7 @@ export function PlayerEditor({ player, onEdit, onClose }: PlayerEditorProps) {
               ✕
             </button>
           </div>
-          <p className="mt-1 text-xs text-faint">{t("edit.hint")}</p>
+          <p className="mt-2 text-xs text-faint">{t("edit.hint")}</p>
         </div>
 
         {/* Rounds list */}
