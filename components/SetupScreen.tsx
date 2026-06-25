@@ -20,6 +20,8 @@ export function SetupScreen({ state, actions }: SetupScreenProps) {
 
   const names = state.players.map((p) => p.name.trim().toLowerCase());
   const hasDuplicate = names.some((n, i) => n && names.indexOf(n) !== i);
+  const draftName = draft.trim().toLowerCase();
+  const draftIsDuplicate = draftName !== "" && names.includes(draftName);
   const canStart =
     state.players.length >= MIN_PLAYERS &&
     state.players.every((p) => p.name.trim().length > 0) &&
@@ -27,7 +29,7 @@ export function SetupScreen({ state, actions }: SetupScreenProps) {
 
   const addDraft = () => {
     const name = draft.trim();
-    if (!name) return;
+    if (!name || draftIsDuplicate) return;
     actions.addPlayer(name);
     setDraft("");
   };
@@ -106,19 +108,28 @@ export function SetupScreen({ state, actions }: SetupScreenProps) {
                   if (e.key === "Enter") addDraft();
                 }}
                 placeholder={t("setup.playerName")}
-                className="min-w-0 flex-1 rounded-xl border border-dashed border-line/20 bg-transparent px-3 py-2.5 text-base font-semibold text-text outline-none transition placeholder:text-faint focus:border-accent"
+                className={[
+                  "min-w-0 flex-1 rounded-xl border border-dashed bg-transparent px-3 py-2.5 text-base font-semibold text-text outline-none transition placeholder:text-faint",
+                  draftIsDuplicate ? "border-gold/60" : "border-line/20 focus:border-accent",
+                ].join(" ")}
               />
               <button
                 type="button"
                 onClick={addDraft}
-                disabled={!draft.trim()}
+                disabled={!draft.trim() || draftIsDuplicate}
                 className="shrink-0 rounded-xl bg-line/10 px-3 py-2.5 text-sm font-black text-text transition hover:bg-line/20 disabled:opacity-30"
               >
                 {t("setup.add")}
               </button>
             </div>
           </div>
-          <p className="mt-2 text-[0.7rem] text-faint">{t("setup.maxRec")}</p>
+          <p className="mt-2 text-[0.7rem]">
+            {draftIsDuplicate ? (
+              <span className="font-semibold text-gold">{t("setup.dupAdd")}</span>
+            ) : (
+              <span className="text-faint">{t("setup.maxRec")}</span>
+            )}
+          </p>
         </div>
 
         {/* Score goal */}

@@ -22,6 +22,7 @@ const en: Dict = {
   "setup.minPlayers": "Add at least 2 players to start",
   "setup.duplicate": "Player names must be different",
   "setup.maxRec": "Unlimited players — 12 recommended",
+  "setup.dupAdd": "That name is already in the list",
 
   "board.round": "Round {n}",
   "board.goal": "Goal {n}",
@@ -107,6 +108,7 @@ const es: Dict = {
   "setup.minPlayers": "Añade al menos 2 jugadores para empezar",
   "setup.duplicate": "Los nombres deben ser diferentes",
   "setup.maxRec": "Jugadores ilimitados — 12 recomendado",
+  "setup.dupAdd": "Ese nombre ya está en la lista",
 
   "board.round": "Ronda {n}",
   "board.goal": "Meta {n}",
@@ -192,6 +194,7 @@ const fr: Dict = {
   "setup.minPlayers": "Ajoutez au moins 2 joueurs pour commencer",
   "setup.duplicate": "Les noms doivent être différents",
   "setup.maxRec": "Joueurs illimités — 12 recommandés",
+  "setup.dupAdd": "Ce nom est déjà dans la liste",
 
   "board.round": "Manche {n}",
   "board.goal": "Objectif {n}",
