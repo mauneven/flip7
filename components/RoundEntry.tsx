@@ -165,6 +165,9 @@ export function RoundEntry({
                 <span className="tabular rounded-md bg-line/10 px-2 py-0.5">
                   {breakdown.basicSum}
                 </span>
+                {breakdown.x2Applied && (
+                  <span className="rounded-md bg-text px-2 py-0.5 text-bg">×2</span>
+                )}
                 {breakdown.isFlip7 && (
                   <span className="tabular rounded-md bg-gold/15 px-2 py-0.5 text-gold">
                     +{breakdown.flip7Bonus}
@@ -174,9 +177,6 @@ export function RoundEntry({
                   <span className="tabular rounded-md bg-line/10 px-2 py-0.5">
                     +{breakdown.modifierSum}
                   </span>
-                )}
-                {breakdown.x2Applied && (
-                  <span className="rounded-md bg-text px-2 py-0.5 text-bg">×2</span>
                 )}
               </div>
             )}

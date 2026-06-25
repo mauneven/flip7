@@ -13,10 +13,10 @@ export interface ScoreBreakdown {
   isFlip7: boolean;
   flip7Bonus: number;
   modifierSum: number;
-  /** basicSum + flip7Bonus + modifierSum, before the x2 multiplier. */
-  subtotal: number;
+  /** Basic-card sum after the x2 multiplier (x2 only doubles the number cards). */
+  multipliedBasics: number;
   x2Applied: boolean;
-  /** Final round score after applying x2 (if present). */
+  /** multipliedBasics + flip7Bonus + modifierSum. */
   total: number;
 }
 
@@ -27,23 +27,24 @@ export function emptySelection(): RoundSelection {
 /**
  * Scores a single round following the FLIP7 house rules, in order:
  *   1. sum the basic card face values
- *   2. add +15 if the player collected 7 basic cards
- *   3. add the +2..+10 bonus cards
- *   4. finally, double everything if the x2 card was flipped
+ *   2. double the basic-card sum if the x2 card was flipped
+ *   3. add +15 if the player collected 7 basic cards (Flip 7 bonus)
+ *   4. add the +2..+10 bonus cards on top
+ * i.e. total = (basics × x2) + flip7Bonus + bonusCards.
  */
 export function computeBreakdown(sel: RoundSelection): ScoreBreakdown {
   const basicSum = sel.basics.reduce((a, b) => a + b, 0);
   const isFlip7 = sel.basics.length >= FLIP7_COUNT;
   const flip7Bonus = isFlip7 ? FLIP7_BONUS : 0;
   const modifierSum = sel.modifiers.reduce((a, b) => a + b, 0);
-  const subtotal = basicSum + flip7Bonus + modifierSum;
-  const total = sel.x2 ? subtotal * 2 : subtotal;
+  const multipliedBasics = sel.x2 ? basicSum * 2 : basicSum;
+  const total = multipliedBasics + flip7Bonus + modifierSum;
   return {
     basicSum,
     isFlip7,
     flip7Bonus,
     modifierSum,
-    subtotal,
+    multipliedBasics,
     x2Applied: sel.x2,
     total,
   };

@@ -10,9 +10,9 @@ Next.js + Tailwind + Framer Motion. No backend — games are saved in your brows
 - **Tap the cards, never do math.** Each round you select the cards a player
   kept and the total is computed for you:
   1. sum the basic number cards (0–12)
-  2. **+15** Flip 7 bonus when a player collected 7 number cards
-  3. add the bonus cards (+2, +4, +6, +8, +10)
-  4. finally apply **×2** to the whole result
+  2. apply **×2** to the basic-card sum (the multiplier hits the number cards)
+  3. **+15** Flip 7 bonus when a player collected 7 number cards
+  4. add the bonus cards (+2, +4, +6, +8, +10) on top
 - **Fair finish.** Reaching the goal doesn't end the game instantly — every
   player in the round is recorded first, so a trailing player can still overtake
   and win. Only then is the winner crowned with a celebration.
